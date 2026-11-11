@@ -1,6 +1,6 @@
-# Task 3 — CFG and PDA Case Studies
+# CFG and PDA Case Studies
 
-An individual, dependency-free Python project demonstrating grammar-based arithmetic expression parsing, restricted assignment syntax checking, and a stack automaton for balanced parentheses.
+An individual, dependency-free Python project for arithmetic expressions, a restricted assignment-statement syntax, and balanced parentheses. It includes a predictive stack parser with instantaneous-description traces, a bounded ambiguity witness, a stack-operation trace, and a standalone browser demo.
 
 ## Scope
 
@@ -14,19 +14,40 @@ Requires Python 3.10 or newer.
 python -m task3
 ```
 
-Run the standard-library tests:
+Choose a case from the CLI. Open [`docs/index.html`](docs/index.html) locally for the interactive browser demo. Run the standard-library tests with:
 
 ```bash
 python -m unittest discover -s tests -v
 ```
 
-## What the models demonstrate
+## Case studies and models
 
-* Arithmetic expressions use an unambiguous LL(1) CFG with multiplication precedence and left associativity. A deterministic PDA simulation uses a predictive parsing stack.
-* Assignment statements use `statement → id = expression`, parsed by the same stack machine after the assignment prefix.
-* Balanced parentheses use a DPDA-style stack: push `(`, pop `)`, reject underflow or other symbols, and accept at end when the stack is empty.
+| Case | Formal model | What the demo shows |
+|---|---|---|
+| Arithmetic expressions | Unambiguous LL(1) CFG and deterministic predictive PDA | Precedence, derivation, full stack/input trace, and an ambiguity comparison |
+| Assignment syntax | `S → id = E` with the expression grammar reused for `E` | Valid and malformed statements parsed through the same PDA stack |
+| Balanced parentheses | `S → ( S ) S | ε` and a one-type DPDA | Every push/pop, underflow rejection, and empty-stack acceptance |
 
-The grammar validates syntax only. It does not calculate expression values, check variable declarations, or implement a complete programming language.
+The grammar gives `*` higher precedence than `+`; both operators associate left. The ambiguity menu separately shows why `E → E+E | E*E | (E) | id` needs precedence rules: `a+b*c` has two groupings under that grammar.
+
+See [`docs/design.md`](docs/design.md) for CFG productions, the PDA model, an instantaneous-description table, test vectors, Mermaid diagrams, ambiguity witness, limitations, and report-ready content. The same document is the individual report draft.
+
+## Project layout
+
+```text
+task3/parser.py       tokenizer and predictive PDA stack parser
+task3/ambiguity.py    bounded parse-tree witness for an ambiguous CFG
+task3/balanced.py     stack recognizer with push/pop trace
+task3/__main__.py     interactive terminal demo
+tests/                standard-library cases plus bounded exhaustive PDA/reference agreement
+docs/design.md        formal design and report content
+docs/grammars.json    machine-readable CFG/PDA summary
+docs/index.html       standalone interactive browser demonstration
+```
+
+## Scope limits
+
+The grammar validates syntax only. It does not evaluate arithmetic, check variable declarations, or implement a complete programming language. It handles identifiers, integer literals, `+`, `*`, and parentheses; the parentheses case study recognizes one delimiter type.
 
 See [`docs/design.md`](docs/design.md) for formal grammar, PDA trace, diagrams, examples, limitations, and report-ready content.
 
