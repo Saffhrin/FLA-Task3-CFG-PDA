@@ -28,8 +28,7 @@ python -m unittest discover -s tests -v
 
 The grammar validates syntax only. It does not calculate expression values, check variable declarations, or implement a complete programming language.
 
-## Publish later
-
-This folder is already a separate local Git repository. After creating an empty GitHub repository, add it as `origin`, commit the files, and push the `main` branch. No GitHub account was accessed and nothing has been published.
-
 See [`docs/design.md`](docs/design.md) for formal grammar, PDA trace, diagrams, examples, limitations, and report-ready content.
+
+Repository: https://github.com/Saffhrin/FLA-Task3-CFG-PDA
+
