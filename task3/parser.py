@@ -17,10 +17,18 @@ TERMINALS = frozenset({"id", "=", "+", "*", "(", ")", "$"})
 
 
 @dataclass(frozen=True)
+class StackStep:
+    stack_top_first: tuple[str, ...]
+    input_remaining: tuple[str, ...]
+    action: str
+
+
+@dataclass(frozen=True)
 class ParseResult:
     accepted: bool
     trace: tuple[str, ...]
     error: str | None = None
+    steps: tuple[StackStep, ...] = ()
 
 
 def tokenize(source: str) -> list[str]:
@@ -54,21 +62,31 @@ def parse(source: str, *, assignment: bool = False) -> ParseResult:
     stack = ["$", "S" if assignment else "E"]
     cursor = 0
     trace: list[str] = []
+    steps: list[StackStep] = []
     while stack:
         top = stack.pop()
         lookahead = tokens[cursor]
         if top in NONTERMINALS:
             production = TABLE.get((top, lookahead))
             if production is None:
-                return ParseResult(False, tuple(trace), f"No production for {top} with lookahead {lookahead}")
+                error = f"No production for {top} with lookahead {lookahead}"
+                steps.append(StackStep(tuple(reversed(stack + [top])), tuple(tokens[cursor:]), f"reject: {error}"))
+                return ParseResult(False, tuple(trace), error, tuple(steps))
             rhs = " ".join(production) if production else "ε"
-            trace.append(f"{top} → {rhs}")
+            action = f"{top} → {rhs}"
+            trace.append(action)
             stack.extend(reversed(production))
+            steps.append(StackStep(tuple(reversed(stack)), tuple(tokens[cursor:]), action))
         elif top == lookahead:
-            trace.append(f"match {top}")
+            action = f"match {top}"
+            trace.append(action)
             cursor += 1
+            steps.append(StackStep(tuple(reversed(stack)), tuple(tokens[cursor:]), action))
         else:
-            return ParseResult(False, tuple(trace), f"Expected {top}, found {lookahead}")
+            error = f"Expected {top}, found {lookahead}"
+            steps.append(StackStep(tuple(reversed(stack + [top])), tuple(tokens[cursor:]), f"reject: {error}"))
+            return ParseResult(False, tuple(trace), error, tuple(steps))
     if cursor != len(tokens):
-        return ParseResult(False, tuple(trace), "Input was not fully consumed")
-    return ParseResult(True, tuple(trace))
+        return ParseResult(False, tuple(trace), "Input was not fully consumed", tuple(steps))
+    return ParseResult(True, tuple(trace), steps=tuple(steps))
+
