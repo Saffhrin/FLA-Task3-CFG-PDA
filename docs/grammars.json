@@ -1,0 +1,35 @@
+{
+  "project": "CFG and PDA Case Studies",
+  "grammars": {
+    "arithmetic_expression": {
+      "start_symbol": "E",
+      "nonterminals": ["E", "Ep", "T", "Tp", "F"],
+      "terminals": ["id", "+", "*", "(", ")"],
+      "productions": {
+        "E": ["T Ep"],
+        "Ep": ["+ T Ep", "ε"],
+        "T": ["F Tp"],
+        "Tp": ["* F Tp", "ε"],
+        "F": ["( E )", "id"]
+      },
+      "parser": "LL(1) predictive PDA; multiplication has higher precedence than addition; operators associate left"
+    },
+    "assignment_statement": {
+      "start_symbol": "S",
+      "productions": {"S": ["id = E"]},
+      "uses": "arithmetic_expression"
+    },
+    "balanced_parentheses": {
+      "start_symbol": "S",
+      "terminals": ["(", ")"],
+      "productions": {"S": ["( S ) S", "ε"]},
+      "pda": "Push on '('; pop on ')' only when '(' is on top; accept at end with an empty working stack."
+    },
+    "ambiguity_witness_only": {
+      "start_symbol": "E",
+      "productions": {"E": ["E + E", "E * E", "( E )", "id"]},
+      "purpose": "Demonstrate two groupings for id + id * id; this grammar is not used by the accepted-input parser."
+    }
+  }
+}
+
