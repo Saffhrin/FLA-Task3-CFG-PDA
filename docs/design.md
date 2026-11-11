@@ -12,6 +12,33 @@ This project applies context-free grammars and pushdown automata to three syntax
 
 A CFG describes recursively structured strings. A PDA extends finite control with a stack, allowing it to remember nested structure. The objectives are to write precise grammars, demonstrate parsing and stack moves, handle malformed inputs, and explain the boundary between syntax and semantics.
 
+## Grammar analysis and CFG-to-PDA construction
+
+The project calculates FIRST and FOLLOW sets from the grammar rather than storing a hand-written parse table. For the expression grammar, the central results are:
+
+| Nonterminal | FIRST | FOLLOW |
+|---|---|---|
+| `E` | `{ (, id }` | `{ ), $ }` |
+| `Ep` | `{ +, ε }` | `{ ), $ }` |
+| `T` | `{ (, id }` | `{ +, ), $ }` |
+| `Tp` | `{ *, ε }` | `{ +, ), $ }` |
+| `F` | `{ (, id }` | `{ *, +, ), $ }` |
+
+The implementation constructs the LL(1) table using `FIRST(rhs)` and, when a production can derive ε, the `FOLLOW(lhs)` set. An occupied table cell with more than one production is reported as a conflict. No conflicts are found for this grammar. This confirms the predictive parser can select each production using one lookahead token.
+
+For a grammar `G = (V, Σ, P, S)`, `cfg_to_pda` builds the standard one-state nondeterministic PDA. It begins with `S` on the stack. For each production `A → α`, it adds an ε-input transition that replaces stack-top `A` by `α`. For each terminal `a`, it adds a transition that consumes `a` when `a` is the stack top. It accepts by empty stack after all input is consumed.
+
+```mermaid
+flowchart LR
+  Grammar[CFG productions] --> Expand[ε-move: expand a nonterminal]
+  Expand --> Stack[Push production symbols in reverse order]
+  Stack --> Match[Read terminal when it is on top]
+  Match -->|input and stack both empty| Accept[Accept]
+  Match -->|no valid move| Reject[Reject]
+```
+
+The CFG-to-PDA machine is nondeterministic in general because a grammar can offer multiple productions for a nonterminal. The bounded breadth-first simulator stores each distinct `(control state, input position, stack)` configuration once, reconstructs an accepting path, and stops with an explicit limit result if the configured search bound is reached. The LL(1) parser is a separate deterministic PDA implementation that uses the computed predictive table.
+
 ## Case study 1: Arithmetic expression validation
 
 Tokens `id` represent identifiers or decimal integer literals. The grammar is:
@@ -111,7 +138,7 @@ For `a+b`, after tokenization the input is `id + id $`. The predictive PDA recor
 
 ## Implementation, results, and limits
 
-`task3/parser.py` tokenizes and runs the predictive PDA stack while retaining instantaneous descriptions. `task3/ambiguity.py` gives a bounded parse-tree witness for the ambiguous expression grammar, and `task3/balanced.py` records each push/pop. `docs/grammars.json` is the machine-readable grammar summary. The tests compare the balanced-parentheses PDA with an independent prefix-count recognizer over all short strings from a representative alphabet. Launch `python -m task3` for the CLI or open `docs/index.html` locally for the browser demo. The standard-library suite runs with `python -m unittest discover -s tests -v`. The grammar does not evaluate arithmetic, enforce type rules, declare variables, or support assignment lists, subtraction, division, unary operators, or function calls. The parenthesis checker recognizes one bracket type only. A successful parse means syntax recognition under the given grammar, not semantic correctness.
+`task3/grammar.py` computes FIRST and FOLLOW sets, builds the LL(1) table, and reports conflicts. `task3/parser.py` tokenizes and runs the deterministic predictive PDA while retaining instantaneous descriptions. `task3/pda.py` provides a general nondeterministic PDA simulator with breadth-first configuration exploration, accepting-path reconstruction, and a maximum-configuration bound. Its CFG-to-PDA constructor implements the standard one-state NPDA construction that accepts by empty stack; the CLI exposes the resulting stack computation and whether the transition relation is deterministic. The parentheses case is also represented as a DPDA in that engine. `task3/ambiguity.py` gives a bounded parse-tree witness for the ambiguous expression grammar. `docs/grammars.json` is the machine-readable grammar summary. Tests cover parser/model behavior and bounded balanced-parentheses agreement. Launch `python -m task3` for the CLI or open `docs/index.html` locally for the browser demo. Run the suite with `python -m unittest discover -s tests -v`. The grammar does not evaluate arithmetic, enforce type rules, declare variables, or support assignment lists, subtraction, division, unary operators, or function calls. The parenthesis checker recognizes one bracket type only. A successful parse means syntax recognition under the given grammar, not semantic correctness.
 
 ## Conclusion
 
@@ -122,4 +149,3 @@ The expression and assignment examples demonstrate grammar-driven parsing with a
 1. J. E. Hopcroft, R. Motwani, and J. D. Ullman, *Introduction to Automata Theory, Languages, and Computation*, 3rd ed., Pearson, 2006.
 2. A. V. Aho, M. S. Lam, R. Sethi, and J. D. Ullman, *Compilers: Principles, Techniques, and Tools*, 2nd ed., Pearson, 2006.
 3. Python Software Foundation, *Python 3 Documentation*, https://docs.python.org/3/.
-

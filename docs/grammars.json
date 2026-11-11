@@ -1,5 +1,11 @@
 {
   "project": "CFG and PDA Case Studies",
+  "analysis": {
+    "computed": ["FIRST sets", "FOLLOW sets", "LL(1) predictive table", "table conflicts"],
+    "expression_grammar_ll1_conflicts": [],
+    "cfg_to_pda": "Standard one-state NPDA: epsilon-expand a nonterminal, match a terminal at stack top, accept by empty stack.",
+    "pda_simulator": "Breadth-first configuration exploration with accepting-path reconstruction and a maximum-configuration bound."
+  },
   "grammars": {
     "arithmetic_expression": {
       "start_symbol": "E",
@@ -32,4 +38,3 @@
     }
   }
 }
-

@@ -1,19 +1,13 @@
 """Predictive grammar parser implemented as a deterministic PDA stack."""
 from dataclasses import dataclass
 import re
+from .grammar import EXPRESSION_GRAMMAR, analyze
 
 TOKEN_RE = re.compile(r"\s*([A-Za-z_][A-Za-z0-9_]*|[0-9]+|[=+*()]|.)")
-TABLE = {
-    ("S", "id"): ("id", "=", "E"),
-    ("E", "id"): ("T", "Ep"), ("E", "("): ("T", "Ep"),
-    ("T", "id"): ("F", "Tp"), ("T", "("): ("F", "Tp"),
-    ("F", "id"): ("id",), ("F", "("): ("(", "E", ")"),
-    ("Ep", "+"): ("+", "T", "Ep"), ("Ep", ")"): (), ("Ep", "$"): (),
-    ("Tp", "*"): ("*", "F", "Tp"), ("Tp", "+"): (),
-    ("Tp", ")"): (), ("Tp", "$"): (),
-}
-NONTERMINALS = frozenset({"S", "E", "Ep", "T", "Tp", "F"})
-TERMINALS = frozenset({"id", "=", "+", "*", "(", ")", "$"})
+GRAMMAR_ANALYSIS = analyze(EXPRESSION_GRAMMAR)
+TABLE = GRAMMAR_ANALYSIS.table
+NONTERMINALS = EXPRESSION_GRAMMAR.nonterminals
+TERMINALS = EXPRESSION_GRAMMAR.terminals | {"$"}
 
 
 @dataclass(frozen=True)
@@ -89,4 +83,3 @@ def parse(source: str, *, assignment: bool = False) -> ParseResult:
     if cursor != len(tokens):
         return ParseResult(False, tuple(trace), "Input was not fully consumed", tuple(steps))
     return ParseResult(True, tuple(trace), steps=tuple(steps))
-
