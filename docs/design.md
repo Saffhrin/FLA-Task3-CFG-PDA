@@ -26,6 +26,18 @@ F  → ( E ) | id
 
 This grammar is LL(1), unambiguous for the selected operators, gives `*` higher precedence than `+`, and gives each operator left associativity. Its terminals are `{id, +, *, (, )}`. The parser's PDA keeps grammar symbols on its stack, expands a nonterminal using the predictive table, and matches terminals against input. It accepts when both input end marker and bottom stack marker are consumed.
 
+For contrast, the grammar `E → E + E | E * E | ( E ) | id` is ambiguous. The string `id + id * id` has these two parse trees:
+
+```text
+        +                   *
+       / \                 / \
+     id   *               +  id
+         / \             / \
+       id  id           id id
+```
+
+The first groups as `id + (id * id)`; the second groups as `(id + id) * id`. The implemented precedence grammar admits only the first grouping for that unparenthesized input. The CLI's bounded ambiguity witness enumerates both trees using the ambiguous grammar, separate from the runtime parser.
+
 ```mermaid
 flowchart LR
   input[Token stream] --> control[Predictive finite control]
@@ -80,21 +92,26 @@ stateDiagram-v2
 
 ## PDA trace illustration
 
-For `a+b`, after tokenization the input is `id + id $`. One possible predictive stack trace, with top shown on the left:
+For `a+b`, after tokenization the input is `id + id $`. The predictive PDA records stack and remaining input after every production expansion or terminal match. Stack top is shown on the left:
 
-| Stack action | Input remaining |
-|---|---|
-| expand `E → T E'` | `id + id $` |
-| expand `T → F T'` | `id + id $` |
-| expand `F → id` | `id + id $` |
-| match `id`; expand `T' → ε` | `+ id $` |
-| expand `E' → + T E'`; match `+` | `id $` |
-| expand `T → F T'`; expand `F → id`; match `id` | `$` |
-| expand `T' → ε`, `E' → ε`; match `$` | empty |
+| Action | Stack after action | Input remaining |
+|---|---|---|
+| start | `E $` | `id + id $` |
+| `E → T E'` | `T E' $` | `id + id $` |
+| `T → F T'` | `F T' E' $` | `id + id $` |
+| `F → id` | `id T' E' $` | `id + id $` |
+| match `id` | `T' E' $` | `+ id $` |
+| `T' → ε` | `E' $` | `+ id $` |
+| `E' → + T E'` | `+ T E' $` | `+ id $` |
+| match `+` | `T E' $` | `id $` |
+| `T → F T'`; `F → id` | `id T' E' $` | `id $` |
+| match `id` | `T' E' $` | `$` |
+| `T' → ε`; `E' → ε` | `$` | `$` |
+| match `$` | empty | empty |
 
 ## Implementation, results, and limits
 
-`task3/parser.py` tokenizes and runs the predictive PDA stack; `task3/balanced.py` records each push/pop. Run `python -m task3`; tests are under `tests/` and run with `python -m unittest discover -s tests -v`. The grammar does not evaluate arithmetic, enforce type rules, declare variables, or support assignment lists, subtraction, division, unary operators, or function calls. The parenthesis checker recognizes one bracket type only. A successful parse means syntax recognition under the given grammar, not semantic correctness.
+`task3/parser.py` tokenizes and runs the predictive PDA stack while retaining instantaneous descriptions. `task3/ambiguity.py` gives a bounded parse-tree witness for the ambiguous expression grammar, and `task3/balanced.py` records each push/pop. `docs/grammars.json` is the machine-readable grammar summary. The tests compare the balanced-parentheses PDA with an independent prefix-count recognizer over all short strings from a representative alphabet. Launch `python -m task3` for the CLI or open `docs/index.html` locally for the browser demo. The standard-library suite runs with `python -m unittest discover -s tests -v`. The grammar does not evaluate arithmetic, enforce type rules, declare variables, or support assignment lists, subtraction, division, unary operators, or function calls. The parenthesis checker recognizes one bracket type only. A successful parse means syntax recognition under the given grammar, not semantic correctness.
 
 ## Conclusion
 
@@ -105,3 +122,4 @@ The expression and assignment examples demonstrate grammar-driven parsing with a
 1. J. E. Hopcroft, R. Motwani, and J. D. Ullman, *Introduction to Automata Theory, Languages, and Computation*, 3rd ed., Pearson, 2006.
 2. A. V. Aho, M. S. Lam, R. Sethi, and J. D. Ullman, *Compilers: Principles, Techniques, and Tools*, 2nd ed., Pearson, 2006.
 3. Python Software Foundation, *Python 3 Documentation*, https://docs.python.org/3/.
+
