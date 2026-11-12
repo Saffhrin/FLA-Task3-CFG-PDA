@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 440" role="img" aria-label="Two distinct parse trees for the same arithmetic token string">
+<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#344054"/></marker></defs>
+<rect width="100%" height="100%" rx="16" fill="#fff"/>
+<style>text{font-family:system-ui,Segoe UI,sans-serif;fill:#172b4d}.edge{stroke:#344054;stroke-width:2;fill:none;marker-end:url(#arrow)}.state{fill:#fff;stroke:#344054;stroke-width:2}.nt{fill:#eff4ff;stroke:#84adff;stroke-width:1.5}.term{fill:#f9fafb;stroke:#98a2b3;stroke-width:1.5}.note{font-size:14px;fill:#526174}</style>
+<text x="28" y="36" font-size="21" font-weight="700">Ambiguous grammar: two trees for id + id * id</text>
+<text x="300" y="80" text-anchor="middle" font-size="18" font-weight="650">Tree 1: id + (id * id)</text>
+<text x="900" y="80" text-anchor="middle" font-size="18" font-weight="650">Tree 2: (id + id) * id</text>
+<path d="M300,162 L180,208" stroke="#667085" stroke-width="1.7"/>
+<path d="M300,162 L420,208" stroke="#667085" stroke-width="1.7"/>
+<path d="M420,297 L360,328" stroke="#667085" stroke-width="1.7"/>
+<path d="M420,297 L485,328" stroke="#667085" stroke-width="1.7"/>
+<path d="M180,297 L180,328" stroke="#667085" stroke-width="1.7"/>
+<rect class="nt" x="274.0" y="118" width="52" height="44" rx="10"/>
+<text x="300" y="141" text-anchor="middle" dominant-baseline="middle" font-size="18">+</text>
+<rect class="term" x="152.0" y="228" width="56" height="44" rx="10"/>
+<text x="180" y="251" text-anchor="middle" dominant-baseline="middle" font-size="18">id</text>
+<rect class="nt" x="394.0" y="228" width="52" height="44" rx="10"/>
+<text x="420" y="251" text-anchor="middle" dominant-baseline="middle" font-size="18">*</text>
+<rect class="term" x="332.0" y="348" width="56" height="44" rx="10"/>
+<text x="360" y="371" text-anchor="middle" dominant-baseline="middle" font-size="18">id</text>
+<rect class="term" x="457.0" y="348" width="56" height="44" rx="10"/>
+<text x="485" y="371" text-anchor="middle" dominant-baseline="middle" font-size="18">id</text>
+<path d="M900,162 L780,208" stroke="#667085" stroke-width="1.7"/>
+<path d="M900,162 L1020,208" stroke="#667085" stroke-width="1.7"/>
+<path d="M780,297 L720,328" stroke="#667085" stroke-width="1.7"/>
+<path d="M780,297 L840,328" stroke="#667085" stroke-width="1.7"/>
+<path d="M1020,297 L1020,328" stroke="#667085" stroke-width="1.7"/>
+<rect class="nt" x="874.0" y="118" width="52" height="44" rx="10"/>
+<text x="900" y="141" text-anchor="middle" dominant-baseline="middle" font-size="18">*</text>
+<rect class="nt" x="754.0" y="228" width="52" height="44" rx="10"/>
+<text x="780" y="251" text-anchor="middle" dominant-baseline="middle" font-size="18">+</text>
+<rect class="term" x="992.0" y="228" width="56" height="44" rx="10"/>
+<text x="1020" y="251" text-anchor="middle" dominant-baseline="middle" font-size="18">id</text>
+<rect class="term" x="692.0" y="348" width="56" height="44" rx="10"/>
+<text x="720" y="371" text-anchor="middle" dominant-baseline="middle" font-size="18">id</text>
+<rect class="term" x="812.0" y="348" width="56" height="44" rx="10"/>
+<text x="840" y="371" text-anchor="middle" dominant-baseline="middle" font-size="18">id</text>
+</svg>

@@ -18,18 +18,21 @@
         "Tp": ["* F Tp", "ε"],
         "F": ["( E )", "id"]
       },
-      "parser": "LL(1) predictive PDA; multiplication has higher precedence than addition; operators associate left"
+      "parser": "LL(1) predictive PDA; multiplication has higher precedence than addition; operators associate left",
+      "determinism": "Predictive LL(1) PDA is deterministic; the standard CFG-to-PDA construction is nondeterministic in general."
     },
     "assignment_statement": {
       "start_symbol": "S",
       "productions": {"S": ["id = E"]},
-      "uses": "arithmetic_expression"
+      "uses": "arithmetic_expression",
+      "pda": "Deterministic LL(1) predictive PDA starting at S, then reusing the expression grammar."
     },
     "balanced_parentheses": {
       "start_symbol": "S",
       "terminals": ["(", ")"],
       "productions": {"S": ["( S ) S", "ε"]},
-      "pda": "Push on '('; pop on ')' only when '(' is on top; accept at end with an empty working stack."
+      "pda": "One-state DPDA with an initially empty working stack: push a marker for each '(' and pop for ')' only when '(' is on top; accept after all input when the working stack is empty.",
+      "deterministic": true
     },
     "ambiguity_witness_only": {
       "start_symbol": "E",

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 470" role="img" aria-label="Predictive parser uses one lookahead token and a grammar stack">
+<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#344054"/></marker></defs>
+<rect width="100%" height="100%" rx="16" fill="#fff"/>
+<style>text{font-family:system-ui,Segoe UI,sans-serif;fill:#172b4d}.edge{stroke:#344054;stroke-width:2;fill:none;marker-end:url(#arrow)}.state{fill:#fff;stroke:#344054;stroke-width:2}.nt{fill:#eff4ff;stroke:#84adff;stroke-width:1.5}.term{fill:#f9fafb;stroke:#98a2b3;stroke-width:1.5}.note{font-size:14px;fill:#526174}</style>
+<text x="28" y="36" font-size="21" font-weight="700">LL(1) predictive parser as a deterministic PDA</text>
+<path class="edge" d="M95,245 L490,245"/>
+<path class="edge" d="M520,214 C405,60 695,60 580,214"/>
+<rect x="407.5" y="51" width="285" height="48" rx="7" fill="#fff" opacity=".96"/>
+<text x="550" y="70" text-anchor="middle" font-size="14">
+<tspan x="550" dy="0">top is nonterminal A</tspan>
+<tspan x="550" dy="18">use LL(1) table[A, lookahead]</tspan>
+</text>
+<path class="edge" d="M510,280 C300,410 300,125 510,220"/>
+<rect x="77.5" y="196" width="255" height="48" rx="7" fill="#fff" opacity=".96"/>
+<text x="205" y="215" text-anchor="middle" font-size="14">
+<tspan x="205" dy="0">top terminal matches</tspan>
+<tspan x="205" dy="18">consume input and stack top</tspan>
+</text>
+<path class="edge" d="M590,280 C800,410 800,125 590,220"/>
+<rect x="767.5" y="196" width="255" height="48" rx="7" fill="#fff" opacity=".96"/>
+<text x="895" y="215" text-anchor="middle" font-size="14">
+<tspan x="895" dy="0">replace A by selected RHS</tspan>
+<tspan x="895" dy="18">(top of stack shown first)</tspan>
+</text>
+<circle class="state" cx="550" cy="250" r="38"/>
+<text x="550" y="250" text-anchor="middle" dominant-baseline="middle" font-size="17">q</text>
+<text class="note" x="28" y="425">Accept when the end marker and bottom-of-stack marker are both consumed; a missing table entry rejects.</text>
+</svg>

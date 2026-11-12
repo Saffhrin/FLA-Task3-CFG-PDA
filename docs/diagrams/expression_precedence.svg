@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 410" role="img" aria-label="Unambiguous parse tree for id plus id times id, with multiplication nested under addition">
+<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#344054"/></marker></defs>
+<rect width="100%" height="100%" rx="16" fill="#fff"/>
+<style>text{font-family:system-ui,Segoe UI,sans-serif;fill:#172b4d}.edge{stroke:#344054;stroke-width:2;fill:none;marker-end:url(#arrow)}.state{fill:#fff;stroke:#344054;stroke-width:2}.nt{fill:#eff4ff;stroke:#84adff;stroke-width:1.5}.term{fill:#f9fafb;stroke:#98a2b3;stroke-width:1.5}.note{font-size:14px;fill:#526174}</style>
+<text x="28" y="36" font-size="21" font-weight="700">Precedence grammar: the selected parse tree</text>
+<text class="note" x="28" y="390">The LL(1) grammar admits id + (id * id): multiplication binds more tightly.</text>
+<path d="M390,132 L250,183" stroke="#667085" stroke-width="1.7"/>
+<path d="M390,132 L530,183" stroke="#667085" stroke-width="1.7"/>
+<path d="M530,272 L465,293" stroke="#667085" stroke-width="1.7"/>
+<path d="M530,272 L595,293" stroke="#667085" stroke-width="1.7"/>
+<rect class="nt" x="364.0" y="88" width="52" height="44" rx="10"/>
+<text x="390" y="111" text-anchor="middle" dominant-baseline="middle" font-size="18">+</text>
+<rect class="term" x="222.0" y="203" width="56" height="44" rx="10"/>
+<text x="250" y="226" text-anchor="middle" dominant-baseline="middle" font-size="18">id</text>
+<rect class="nt" x="504.0" y="203" width="52" height="44" rx="10"/>
+<text x="530" y="226" text-anchor="middle" dominant-baseline="middle" font-size="18">*</text>
+<rect class="term" x="437.0" y="318" width="56" height="44" rx="10"/>
+<text x="465" y="341" text-anchor="middle" dominant-baseline="middle" font-size="18">id</text>
+<rect class="term" x="567.0" y="318" width="56" height="44" rx="10"/>
+<text x="595" y="341" text-anchor="middle" dominant-baseline="middle" font-size="18">id</text>
+</svg>

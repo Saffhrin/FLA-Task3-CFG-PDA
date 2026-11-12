@@ -1,18 +1,27 @@
+import sys
+
 from .balanced import check_parentheses
 from .ambiguity import ambiguous_parse_trees, render_tree
+from .cases import CASE_EXAMPLES
 from .grammar import EXPRESSION_GRAMMAR, GRAMMAR_ANALYSIS
 from .pda import cfg_to_pda
-from .parser import parse, tokenize
+from .ll1 import parse, tokenize
 
 
 def main() -> None:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     while True:
-        print("\nCFG / PDA Case Studies\n1) Arithmetic expression\n2) Assignment statement\n3) Balanced parentheses\n4) Ambiguity witness\n5) Construct and run CFG → PDA\n6) FIRST/FOLLOW and LL(1) analysis\nq) Quit")
+        print("\nCFG / PDA Case Studies\n1) Arithmetic expression\n2) Assignment statement\n3) Balanced parentheses\n4) Ambiguity witness\n5) Construct and run CFG → PDA\n6) FIRST/FOLLOW and LL(1) analysis\n7) Show grammars and examples\nq) Quit")
         choice = input("> ").strip().lower()
         if choice == "q":
             return
-        if choice not in {"1", "2", "3", "4", "5", "6"}:
-            print("Choose 1–6 or q.")
+        if choice not in {"1", "2", "3", "4", "5", "6", "7"}:
+            print("Choose 1–7 or q.")
+            continue
+        if choice == "7":
+            for title, case in CASE_EXAMPLES.items():
+                print(f"\n{title}\n  Grammar: {case['grammar']}\n  Accepted examples: {', '.join(case['accepted'])}\n  Rejected examples: {', '.join(case['rejected'])}")
             continue
         if choice == "6":
             for nonterminal in sorted(EXPRESSION_GRAMMAR.nonterminals):

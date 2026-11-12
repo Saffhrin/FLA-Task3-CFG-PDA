@@ -19,7 +19,7 @@
   <div class="actions"><button id="run">Parse input</button><button class="soft" id="example">Load example</button></div>
   <div id="result" class="result" aria-live="polite">Choose a case and parse an input.</div>
   <h2>Instantaneous descriptions / stack actions</h2><div id="trace" class="trace">No run yet.</div>
-  <footer>Grammar recognition checks syntax only. It does not evaluate arithmetic or verify program meaning. Full grammar, PDA explanation, and report draft: <a href="design.md">docs/design.md</a>.</footer>
+  <footer>Grammar recognition checks syntax only. It does not evaluate arithmetic or verify program meaning. See the <a href="design.md">report</a> and the <a href="diagrams/index.html">PDA and parse-tree diagrams</a>.</footer>
 </section></main>
 <script>
 const $=x=>document.getElementById(x), mode=$("mode"), input=$("value"), result=$("result"), trace=$("trace");
@@ -35,4 +35,3 @@ function show(ok,message,lines){result.className="result "+(ok?"accept":"reject"
 function run(){const s=input.value;if(mode.value==="paren"){const r=parentheses(s);show(r.ok,r.ok?"ACCEPTED — all openings were matched.":"REJECTED — stack processing found an unmatched or invalid symbol.",r.steps);return;}if(mode.value==="ambiguous"){const r=ambiguous(s);if(!r.ok){show(false,r.error,[]);return;}show(true,`The ambiguous grammar produced ${r.trees.length} parse tree(s).`,r.trees.map((t,i)=>`Tree ${i+1}:\n${treeText(t)}`));return;}const r=parse(s,mode.value==="assign");show(r.ok,r.ok?"ACCEPTED — the PDA parser consumed the full input.":`REJECTED — ${r.error}`,r.steps.map(x=>`stack(top→bottom)=${JSON.stringify(x.stack)}  input=${JSON.stringify(x.input)}  ${x.action}`));}
 $("run").addEventListener("click",run);$("example").addEventListener("click",examplesByMode);mode.addEventListener("change",()=>{input.placeholder=mode.value==="paren"?"(()())":"a+b*c";});input.addEventListener("keydown",e=>{if(e.key==="Enter")run();});
 </script></body></html>
-

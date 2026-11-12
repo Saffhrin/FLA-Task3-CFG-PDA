@@ -1,9 +1,9 @@
 import unittest
 from itertools import product
 
-from task3.balanced import check_parentheses
-from task3.ambiguity import ambiguous_parse_trees
-from task3.parser import parse
+from pda_cfg.balanced import check_parentheses
+from pda_cfg.ambiguity import ambiguous_parse_trees
+from pda_cfg.ll1 import parse
 
 
 class GrammarAndPdaTests(unittest.TestCase):
@@ -70,4 +70,3 @@ class GrammarAndPdaTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

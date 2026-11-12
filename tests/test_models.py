@@ -1,7 +1,7 @@
 import unittest
 
-from task3.grammar import EXPRESSION_GRAMMAR, analyze
-from task3.pda import balanced_parentheses_pda, cfg_to_pda
+from pda_cfg.grammar import EXPRESSION_GRAMMAR, analyze
+from pda_cfg.pda import balanced_parentheses_pda, cfg_to_pda
 
 
 class FormalModelTests(unittest.TestCase):

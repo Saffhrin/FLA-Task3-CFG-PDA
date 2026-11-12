@@ -1,5 +1,5 @@
 """Bounded parse-tree witness for the intentionally ambiguous expression CFG."""
-from .parser import tokenize
+from .ll1 import tokenize
 
 Tree = str | tuple[str, "Tree", "Tree"]
 
@@ -52,4 +52,3 @@ def render_tree(tree: Tree, indent: str = "") -> str:
         return indent + tree
     operator, left, right = tree
     return "\n".join((indent + operator, render_tree(left, indent + "  "), render_tree(right, indent + "  ")))
-

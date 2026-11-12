@@ -12,6 +12,8 @@ This project applies context-free grammars and pushdown automata to three syntax
 
 A CFG describes recursively structured strings. A PDA extends finite control with a stack, allowing it to remember nested structure. The objectives are to write precise grammars, demonstrate parsing and stack moves, handle malformed inputs, and explain the boundary between syntax and semantics.
 
+Balanced parentheses are not regular. If the language had pumping length `p`, choose `w = (`ᵖ`)`ᵖ. For any decomposition `w = xyz` with `|xy| ≤ p` and `|y| > 0`, `y` contains only opening parentheses. Pumping down removes at least one opening parenthesis but leaves all `p` closing parentheses, so the result is not balanced. This contradicts the pumping lemma. The PDA stack supplies the unbounded memory that a finite automaton lacks.
+
 ## Grammar analysis and CFG-to-PDA construction
 
 The project calculates FIRST and FOLLOW sets from the grammar rather than storing a hand-written parse table. For the expression grammar, the central results are:
@@ -39,6 +41,10 @@ flowchart LR
 
 The CFG-to-PDA machine is nondeterministic in general because a grammar can offer multiple productions for a nonterminal. The bounded breadth-first simulator stores each distinct `(control state, input position, stack)` configuration once, reconstructs an accepting path, and stops with an explicit limit result if the configured search bound is reached. The LL(1) parser is a separate deterministic PDA implementation that uses the computed predictive table.
 
+![Standard CFG-to-PDA transition model](diagrams/cfg_to_pda.svg)
+
+![LL(1) predictive PDA transition model](diagrams/predictive_pda.svg)
+
 ## Case study 1: Arithmetic expression validation
 
 Tokens `id` represent identifiers or decimal integer literals. The grammar is:
@@ -65,6 +71,8 @@ For contrast, the grammar `E → E + E | E * E | ( E ) | id` is ambiguous. The s
 
 The first groups as `id + (id * id)`; the second groups as `(id + id) * id`. The implemented precedence grammar admits only the first grouping for that unparenthesized input. The CLI's bounded ambiguity witness enumerates both trees using the ambiguous grammar, separate from the runtime parser.
 
+![Two parse trees from the ambiguous arithmetic grammar](diagrams/expression_ambiguity.svg)
+
 ```mermaid
 flowchart LR
   input[Token stream] --> control[Predictive finite control]
@@ -76,6 +84,8 @@ flowchart LR
 
 Example derivation for `a+b*c` (leftmost): `E ⇒ T E' ⇒ F T' E' ⇒ id T' E' ⇒ id E' ⇒ id + T E' ⇒ id + F T' E' ⇒ id + id * F T' E' ⇒ id + id * id T' E' ⇒ id + id * id E' ⇒ id + id * id`.
 
+![Parse tree chosen by the precedence grammar](diagrams/expression_precedence.svg)
+
 ## Case study 2: Restricted assignment syntax
 
 ```text
@@ -84,30 +94,34 @@ S → id = E
 
 `E` is the expression grammar above. A statement such as `total=(a+b)*c` is accepted; an assignment prefix missing its right side is rejected. Identifiers have a conventional ASCII identifier form, and integer literals are allowed as expression atoms. This is a deliberately small syntax subset, not a full programming-language parser. The same predictive PDA begins at `S` and reuses the expression productions.
 
+![Assignment syntax uses the expression PDA after `id =`](diagrams/assignment_syntax.svg)
+
 ## Case study 3: Balanced parentheses
 
 CFG: `S → ( S ) S | ε`. Language: `D = { w ∈ {(,)}* : every prefix has at least as many '(' as ')', and totals are equal }`.
 
-The DPDA has a bottom marker and one stack marker `(`. It pushes for every opening parenthesis, pops for each closing parenthesis, rejects on a close at bottom or on a symbol outside the alphabet, and accepts at end if only the bottom marker remains. An unbounded stack is necessary because this language is not regular.
+The DPDA starts with an empty working stack and one control state. On `(` with an empty stack, it pushes `(`; on `(` with `(` at the top, it replaces that marker with two markers. On `)` with `(` at the top, it pops. A close with an empty stack or a symbol outside the alphabet has no transition. It accepts after all input is read if the working stack is empty.
 
 | Input symbol | Stack top | Action | Outcome |
 |---|---|---|---|
-| `(` | bottom marker or `(` | push `(` | continue |
+| `(` | empty stack | push `(` | continue |
+| `(` | `(` | replace top marker with `((` | continue |
 | `)` | `(` | pop | continue |
-| `)` | bottom marker | no move | reject |
+| `)` | empty stack | no move | reject |
 | outside `{(,)}` | any | no move | reject |
-| end of input | bottom marker | accept | balanced |
+| end of input | empty stack | accept | balanced |
 | end of input | `(` | no move | reject |
 
 ```mermaid
 stateDiagram-v2
   [*] --> q
-  q --> q: '(' / push
-  q --> q: ')' / pop if stack top is '('
-  q --> reject: ')' / reject if no '(' on stack
-  q --> reject: other symbol
-  q --> accept: end of input and stack at bottom
+  q --> q: '(' / push if stack empty
+  q --> q: '(' / push one more marker
+  q --> q: ')' / pop one marker
+  q --> [*]: end of input and stack empty / accept
 ```
+
+![Balanced-parentheses DPDA transition diagram](diagrams/balanced_parentheses_dpda.svg)
 
 ## Example test cases
 
@@ -138,7 +152,7 @@ For `a+b`, after tokenization the input is `id + id $`. The predictive PDA recor
 
 ## Implementation, results, and limits
 
-`task3/grammar.py` computes FIRST and FOLLOW sets, builds the LL(1) table, and reports conflicts. `task3/parser.py` tokenizes and runs the deterministic predictive PDA while retaining instantaneous descriptions. `task3/pda.py` provides a general nondeterministic PDA simulator with breadth-first configuration exploration, accepting-path reconstruction, and a maximum-configuration bound. Its CFG-to-PDA constructor implements the standard one-state NPDA construction that accepts by empty stack; the CLI exposes the resulting stack computation and whether the transition relation is deterministic. The parentheses case is also represented as a DPDA in that engine. `task3/ambiguity.py` gives a bounded parse-tree witness for the ambiguous expression grammar. `docs/grammars.json` is the machine-readable grammar summary. Tests cover parser/model behavior and bounded balanced-parentheses agreement. Launch `python -m task3` for the CLI or open `docs/index.html` locally for the browser demo. Run the suite with `python -m unittest discover -s tests -v`. The grammar does not evaluate arithmetic, enforce type rules, declare variables, or support assignment lists, subtraction, division, unary operators, or function calls. The parenthesis checker recognizes one bracket type only. A successful parse means syntax recognition under the given grammar, not semantic correctness.
+`pda_cfg/grammar.py` computes FIRST and FOLLOW sets, builds the LL(1) table, and reports conflicts. `pda_cfg/ll1.py` tokenizes and runs the deterministic predictive PDA while retaining instantaneous descriptions. `pda_cfg/pda.py` provides a general nondeterministic PDA simulator with breadth-first configuration exploration, accepting-path reconstruction, and a maximum-configuration bound. Its CFG-to-PDA constructor implements the standard one-state NPDA construction that accepts by empty stack; the CLI exposes the resulting stack computation and whether the transition relation is deterministic. The parentheses case is also represented as a DPDA in that engine. `pda_cfg/ambiguity.py` gives a bounded parse-tree witness for the ambiguous expression grammar. `pda_cfg/cases.py` keeps the three case summaries and sample strings used by the CLI. `docs/grammars.json` is the machine-readable grammar summary. Tests cover parser/model behavior and bounded balanced-parentheses agreement. Run `python tools/make_diagrams.py` to rebuild six SVG figures and the diagram gallery. Launch `python -m pda_cfg` for the CLI or open `docs/index.html` locally for the browser demo. Run the suite with `python -m unittest discover -s tests -v`. The grammar does not evaluate arithmetic, enforce type rules, declare variables, or support assignment lists, subtraction, division, unary operators, or function calls. The parenthesis checker recognizes one bracket type only. A successful parse means syntax recognition under the given grammar, not semantic correctness.
 
 ## Conclusion
 

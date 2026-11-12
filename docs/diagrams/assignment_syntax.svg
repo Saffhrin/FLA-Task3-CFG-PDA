@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1050 300" role="img" aria-label="Assignment grammar uses an identifier, equals sign, and the arithmetic expression grammar">
+<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#344054"/></marker></defs>
+<rect width="100%" height="100%" rx="16" fill="#fff"/>
+<style>text{font-family:system-ui,Segoe UI,sans-serif;fill:#172b4d}.edge{stroke:#344054;stroke-width:2;fill:none;marker-end:url(#arrow)}.state{fill:#fff;stroke:#344054;stroke-width:2}.nt{fill:#eff4ff;stroke:#84adff;stroke-width:1.5}.term{fill:#f9fafb;stroke:#98a2b3;stroke-width:1.5}.note{font-size:14px;fill:#526174}</style>
+<text x="28" y="36" font-size="21" font-weight="700">Assignment syntax case study</text>
+<path class="edge" d="M131.0,150 L272.0,150"/>
+<path class="edge" d="M338.0,150 L479.0,150"/>
+<path class="edge" d="M541.0,150 L684.0,150"/>
+<path class="edge" d="M746.0,150 L861.0,150"/>
+<rect class="nt" x="74.0" y="128" width="52" height="44" rx="10"/>
+<text x="100" y="151" text-anchor="middle" dominant-baseline="middle" font-size="18">S</text>
+<rect class="term" x="277.0" y="128" width="56" height="44" rx="10"/>
+<text x="305" y="151" text-anchor="middle" dominant-baseline="middle" font-size="18">id</text>
+<rect class="term" x="484.0" y="128" width="52" height="44" rx="10"/>
+<text x="510" y="151" text-anchor="middle" dominant-baseline="middle" font-size="18">=</text>
+<rect class="nt" x="689.0" y="128" width="52" height="44" rx="10"/>
+<text x="715" y="151" text-anchor="middle" dominant-baseline="middle" font-size="18">E</text>
+<rect class="nt" x="866.0" y="128" width="128" height="44" rx="10"/>
+<text x="930" y="151" text-anchor="middle" dominant-baseline="middle" font-size="18">accept</text>
+<text class="note" x="28" y="235">Production S → id = E; E is parsed by the same LL(1) expression PDA.</text>
+<text class="note" x="28" y="260">The full input must be consumed. Examples: total=(a+b)*c ✓   a=b+ ✗</text>
+</svg>

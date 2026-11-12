@@ -102,3 +102,6 @@ def analyze(grammar: Grammar) -> GrammarAnalysis:
         table=table,
         conflicts=conflicts,
     )
+
+
+GRAMMAR_ANALYSIS = analyze(EXPRESSION_GRAMMAR)

@@ -1,10 +1,9 @@
 """Predictive grammar parser implemented as a deterministic PDA stack."""
 from dataclasses import dataclass
 import re
-from .grammar import EXPRESSION_GRAMMAR, analyze
+from .grammar import EXPRESSION_GRAMMAR, GRAMMAR_ANALYSIS
 
 TOKEN_RE = re.compile(r"\s*([A-Za-z_][A-Za-z0-9_]*|[0-9]+|[=+*()]|.)")
-GRAMMAR_ANALYSIS = analyze(EXPRESSION_GRAMMAR)
 TABLE = GRAMMAR_ANALYSIS.table
 NONTERMINALS = EXPRESSION_GRAMMAR.nonterminals
 TERMINALS = EXPRESSION_GRAMMAR.terminals | {"$"}
